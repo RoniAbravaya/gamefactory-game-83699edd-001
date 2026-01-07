@@ -1,100 +1,114 @@
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/material.dart';
 
-enum GameState {
-  playing,
-  paused,
-  gameOver,
-  levelComplete,
-}
+import 'game_state.dart';
+import 'level_config.dart';
+import 'score_system.dart';
+import 'lives_system.dart';
+import 'game_controller.dart';
+import 'analytics_service.dart';
+import 'ui_overlay.dart';
 
-class Batch20260107_124849_puzzle_01Game extends FlameGame with PanDetector {
+/// The main FlameGame class for the Batch-20260107-124849-puzzle-01 game.
+class Batch-20260107-124849-puzzle-01Game extends FlameGame with TapDetector {
+  /// The current game state.
   GameState _gameState = GameState.playing;
-  int _currentLevel = 1;
-  int _score = 0;
-  final int _totalLevels = 10;
-  final int _starsEarnedPerLevel = 3;
+
+  /// The score system.
+  final ScoreSystem _scoreSystem = ScoreSystem();
+
+  /// The lives system.
+  final LivesSystem _livesSystem = LivesSystem();
+
+  /// The game controller.
+  final GameController _gameController = GameController();
+
+  /// The analytics service.
+  final AnalyticsService _analyticsService = AnalyticsService();
+
+  /// The UI overlay.
+  final UIOverlay _uiOverlay = UIOverlay();
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
-    // Load initial level, player, obstacles, and collectibles
-    await loadLevel(_currentLevel);
+    // Set up the camera and world
+    camera.viewport = FixedResolutionViewport(Vector2(800, 600));
+    camera.followComponent(_gameController);
+
+    // Load the initial level
+    await _loadLevel(1);
+
+    // Add the UI overlay
+    add(_uiOverlay);
   }
 
-  /// Loads the level specified by [levelNumber].
-  Future<void> loadLevel(int levelNumber) async {
-    // Placeholder for level loading logic
-    print('Loading level $levelNumber');
-    // Reset or update game state as needed for the new level
+  /// Loads the specified level.
+  Future<void> _loadLevel(int levelNumber) async {
+    // Load the level configuration
+    final levelConfig = await LevelConfig.load(levelNumber);
+
+    // Add the level components to the game
+    // ...
+
+    // Update the game state
+    _gameState = GameState.playing;
+
+    // Log the level start event
+    _analyticsService.logLevelStart(levelNumber);
   }
 
-  /// Handles the swipe action for tile swapping.
   @override
-  void onPanUpdate(DragUpdateInfo info) {
-    super.onPanUpdate(info);
-    // Implement tile swapping logic based on swipe direction
-    // This is a placeholder for the swipe detection logic
-    print('Swiped: ${info.delta}');
-  }
+  void update(double dt) {
+    super.update(dt);
 
-  /// Updates the game score.
-  void updateScore(int points) {
-    _score += points;
-    // Implement score update logic, including checking for level completion
-    print('Score updated: $_score');
-  }
-
-  /// Manages the game state transitions.
-  void changeGameState(GameState newState) {
-    _gameState = newState;
+    // Update the game state and systems
     switch (_gameState) {
       case GameState.playing:
-        // Resume gameplay or start a new level
+        _gameController.update(dt);
+        _scoreSystem.update(dt);
+        _livesSystem.update(dt);
         break;
       case GameState.paused:
-        // Show pause menu or overlay
+        // Pause the game
         break;
       case GameState.gameOver:
-        // Show game over screen and options to retry or exit
+        // Handle game over
         break;
       case GameState.levelComplete:
-        // Process level completion, award stars, and potentially load next level
-        _handleLevelCompletion();
+        // Handle level completion
         break;
     }
   }
 
-  /// Handles the completion of a level.
-  void _handleLevelCompletion() {
-    print('Level $_currentLevel complete!');
-    // Award stars, save progress, and check if there are more levels to load
-    if (_currentLevel < _totalLevels) {
-      _currentLevel++;
-      loadLevel(_currentLevel);
-    } else {
-      print('All levels completed!');
-      // Implement end-of-game logic, such as showing a congratulations screen
+  @override
+  void onTapDown(TapDownInfo info) {
+    super.onTapDown(info);
+    _gameController.handleTap(info.eventPosition.game);
+  }
+
+  /// Handles a successful tile swap.
+  void _handleTileSwap() {
+    // Update the score
+    _scoreSystem.incrementScore();
+
+    // Check for level completion
+    if (_scoreSystem.score >= _levelConfig.targetScore) {
+      _gameState = GameState.levelComplete;
+      _analyticsService.logLevelComplete();
     }
   }
 
-  /// Integrates analytics hooks for tracking key events.
-  void trackEvent(String eventName) {
-    // Placeholder for analytics integration
-    print('Event tracked: $eventName');
-  }
+  /// Handles a failed tile swap.
+  void _handleTileSwapFail() {
+    // Decrement the player's lives
+    _livesSystem.decrementLives();
 
-  /// Placeholder for ad integration.
-  void showRewardedAd() {
-    // Placeholder for showing a rewarded ad
-    print('Showing rewarded ad');
-    // On ad completion, reward the player (e.g., extra time, hints, or level unlocks)
-  }
-
-  /// Placeholder for storage service integration.
-  void saveGameProgress() {
-    // Placeholder for saving game progress to a persistent storage
-    print('Game progress saved');
+    // Check for game over
+    if (_livesSystem.lives <= 0) {
+      _gameState = GameState.gameOver;
+      _analyticsService.logLevelFail();
+    }
   }
 }

@@ -1,91 +1,74 @@
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
-import 'package:flame/input.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/painting.dart';
 
-/// Represents the player in the puzzle game, handling animations, movement, and game mechanics like scoring.
-class Player extends SpriteAnimationComponent
-    with HasGameRef, Hitbox, Collidable, KeyboardHandler {
-  // Player states
-  bool isMoving = false;
-  Vector2 direction = Vector2.zero();
-  final double speed = 200.0;
-  int lives = 3;
-  int score = 0;
+/// The Player component for the puzzle game.
+class Player extends SpriteAnimationComponent with HasHitboxes, Collidable {
+  /// The player's current health.
+  double health = 100.0;
 
-  // Animations
-  late final SpriteAnimation idleAnimation;
-  late final SpriteAnimation movingAnimation;
+  /// The maximum health the player can have.
+  final double maxHealth = 100.0;
 
-  Player()
-      : super(size: Vector2.all(50.0), anchor: Anchor.center);
+  /// The duration of the player's invulnerability frames after taking damage.
+  final double invulnerabilityDuration = 1.0;
 
-  @override
-  Future<void> onLoad() async {
-    super.onLoad();
-    // Assuming animations are loaded here
-    idleAnimation = await _loadAnimation('idle');
-    movingAnimation = await _loadAnimation('moving');
-    animation = idleAnimation;
-    addShape(HitboxRectangle());
+  /// The timer for the player's invulnerability frames.
+  double _invulnerabilityTimer = 0.0;
+
+  /// Whether the player is currently invulnerable.
+  bool get isInvulnerable => _invulnerabilityTimer > 0.0;
+
+  /// Creates a new instance of the Player component.
+  Player({
+    required Vector2 position,
+    required SpriteAnimation idleAnimation,
+    required SpriteAnimation walkAnimation,
+    required SpriteAnimation hurtAnimation,
+  }) : super(
+          position: position,
+          size: Vector2.all(32.0),
+          animation: idleAnimation,
+        ) {
+    addHitbox(HitboxCircle(radius: 16.0));
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    if (isMoving) {
-      position.add(direction.normalized() * speed * dt);
-      animation = movingAnimation;
+
+    // Update the invulnerability timer
+    if (_invulnerabilityTimer > 0.0) {
+      _invulnerabilityTimer -= dt;
+    }
+  }
+
+  /// Moves the player in the specified direction.
+  void move(Vector2 direction) {
+    position += direction * 200.0 * dt;
+    animation = walkAnimation;
+  }
+
+  /// Stops the player's movement.
+  void stopMoving() {
+    animation = idleAnimation;
+  }
+
+  /// Damages the player, reducing their health.
+  /// If the player is not invulnerable, they take the full damage.
+  /// Otherwise, the damage is reduced by a percentage.
+  void takeDamage(double damage) {
+    if (!isInvulnerable) {
+      health -= damage;
+      _invulnerabilityTimer = invulnerabilityDuration;
+      animation = hurtAnimation;
     } else {
-      animation = idleAnimation;
-    }
-    isMoving = false; // Reset movement flag after processing
-  }
-
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    direction = Vector2.zero();
-    isMoving = keysPressed.isNotEmpty; // Player is moving if any key is pressed
-
-    if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
-      direction += Vector2(0, -1);
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
-      direction += Vector2(0, 1);
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
-      direction += Vector2(-1, 0);
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
-      direction += Vector2(1, 0);
-    }
-
-    return super.onKeyEvent(event, keysPressed);
-  }
-
-  /// Loads and returns a [SpriteAnimation] for the player based on the provided [animationType].
-  Future<SpriteAnimation> _loadAnimation(String animationType) async {
-    // Placeholder for loading animations
-    // In a real scenario, you would load the animation frames from assets
-    return SpriteAnimation.empty();
-  }
-
-  /// Increments the player's score by the given [points].
-  void addScore(int points) {
-    score += points;
-  }
-
-  /// Decrements the player's lives by one.
-  void loseLife() {
-    lives--;
-    if (lives <= 0) {
-      // Handle game over state
+      health -= damage * 0.5;
     }
   }
 
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    super.onCollision(intersectionPoints, other);
-    // Handle collision with other game elements
+  /// Heals the player, increasing their health up to the maximum.
+  void heal(double amount) {
+    health = (health + amount).clamp(0.0, maxHealth);
   }
 }

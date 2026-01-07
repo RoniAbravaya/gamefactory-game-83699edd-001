@@ -1,55 +1,44 @@
 import 'package:flame/components.dart';
-import 'package:flame/geometry.dart';
+import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
 
-/// A component representing an obstacle in the puzzle game.
-/// It has a visual representation, can move or spawn at specific locations,
-/// deals damage on collision, and has a collision hitbox.
-class Obstacle extends PositionComponent with HasHitboxes, Collidable {
-  final Vector2 _movement;
-  final double _damage;
-  final Paint _paint;
-  late final RectangleHitbox _hitbox;
+class Obstacle extends PositionComponent with CollisionCallbacks {
+  final double moveSpeed;
+  final Vector2 direction;
 
-  /// Creates an instance of an obstacle.
-  /// 
-  /// [size] defines the size of the obstacle.
-  /// [position] defines the initial position of the obstacle.
-  /// [movement] defines the movement vector for the obstacle.
-  /// [damage] defines the damage dealt by the obstacle on collision.
-  /// [color] defines the color of the obstacle.
   Obstacle({
-    required Vector2 size,
     required Vector2 position,
-    required Vector2 movement,
-    required double damage,
-    required Color color,
-  })  : _movement = movement,
-        _damage = damage,
-        _paint = Paint()..color = color,
-        super(position: position, size: size) {
-    _hitbox = RectangleHitbox();
-    addHitbox(_hitbox);
+    required Vector2 size,
+    this.moveSpeed = 150,
+    this.direction = const Vector2(0, 1),
+  }) : super(
+          position: position,
+          size: size,
+          anchor: Anchor.center,
+        );
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    add(RectangleHitbox());
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    position.add(_movement * dt);
+    position += direction * moveSpeed * dt;
+    
+    if (position.y > 900 || position.y < -100 ||
+        position.x > 500 || position.x < -100) {
+      removeFromParent();
+    }
   }
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
-    canvas.drawRect(size.toRect(), _paint);
-  }
-
-  /// Handles the logic when this obstacle collides with another [Collidable].
-  /// 
-  /// In this context, it could deal damage or trigger a specific game event.
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    super.onCollision(intersectionPoints, other);
-    // Example: Deal damage to the player or trigger an event.
+    canvas.drawRect(
+      size.toRect(),
+      Paint()..color = Colors.red,
+    );
   }
 }
