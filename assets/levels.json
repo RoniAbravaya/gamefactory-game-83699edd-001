@@ -1,0 +1,241 @@
+{
+  "levels": [
+    {
+      "level_number": 1,
+      "name": "Tile Tango",
+      "is_free": true,
+      "unlock_requirement": "none",
+      "difficulty": 0.2,
+      "time_limit_seconds": 60,
+      "target_score": 500,
+      "obstacles": {
+        "type": "none",
+        "count": 0,
+        "speed": 0
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 10,
+        "value": 50
+      },
+      "special_features": [],
+      "background_theme": "meadow",
+      "music_track": "calm_melody"
+    },
+    {
+      "level_number": 2,
+      "name": "Swapping Spree",
+      "is_free": true,
+      "unlock_requirement": "none",
+      "difficulty": 0.3,
+      "time_limit_seconds": 60,
+      "target_score": 800,
+      "obstacles": {
+        "type": "none",
+        "count": 0,
+        "speed": 0
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 15,
+        "value": 50
+      },
+      "special_features": [],
+      "background_theme": "city",
+      "music_track": "upbeat_tempo"
+    },
+    {
+      "level_number": 3,
+      "name": "Pattern Pursuit",
+      "is_free": true,
+      "unlock_requirement": "none",
+      "difficulty": 0.4,
+      "time_limit_seconds": 60,
+      "target_score": 1200,
+      "obstacles": {
+        "type": "none",
+        "count": 0,
+        "speed": 0
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 20,
+        "value": 50
+      },
+      "special_features": [],
+      "background_theme": "forest",
+      "music_track": "adventurous_melody"
+    },
+    {
+      "level_number": 4,
+      "name": "Tiled Tactics",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.5,
+      "time_limit_seconds": 45,
+      "target_score": 1500,
+      "obstacles": {
+        "type": "moving_blocks",
+        "count": 5,
+        "speed": 2
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 25,
+        "value": 75
+      },
+      "special_features": [
+        "time_freeze_powerup"
+      ],
+      "background_theme": "desert",
+      "music_track": "tense_rhythm"
+    },
+    {
+      "level_number": 5,
+      "name": "Tile Tornado",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.6,
+      "time_limit_seconds": 45,
+      "target_score": 2000,
+      "obstacles": {
+        "type": "rotating_blocks",
+        "count": 8,
+        "speed": 3
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 30,
+        "value": 75
+      },
+      "special_features": [
+        "score_multiplier_powerup"
+      ],
+      "background_theme": "underwater",
+      "music_track": "suspenseful_melody"
+    },
+    {
+      "level_number": 6,
+      "name": "Tile Tempest",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.7,
+      "time_limit_seconds": 30,
+      "target_score": 2500,
+      "obstacles": {
+        "type": "falling_blocks",
+        "count": 10,
+        "speed": 4
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 35,
+        "value": 100
+      },
+      "special_features": [
+        "tile_swap_booster"
+      ],
+      "background_theme": "space",
+      "music_track": "electronic_beat"
+    },
+    {
+      "level_number": 7,
+      "name": "Tile Typhoon",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.8,
+      "time_limit_seconds": 30,
+      "target_score": 3000,
+      "obstacles": {
+        "type": "disappearing_blocks",
+        "count": 12,
+        "speed": 5
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 40,
+        "value": 100
+      },
+      "special_features": [
+        "time_extension_powerup"
+      ],
+      "background_theme": "futuristic",
+      "music_track": "intense_techno"
+    },
+    {
+      "level_number": 8,
+      "name": "Tile Tempest II",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.8,
+      "time_limit_seconds": 30,
+      "target_score": 3500,
+      "obstacles": {
+        "type": "falling_blocks",
+        "count": 15,
+        "speed": 5
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 45,
+        "value": 100
+      },
+      "special_features": [
+        "tile_swap_booster",
+        "score_multiplier_powerup"
+      ],
+      "background_theme": "space",
+      "music_track": "electronic_beat"
+    },
+    {
+      "level_number": 9,
+      "name": "Tile Tornado II",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.9,
+      "time_limit_seconds": 20,
+      "target_score": 4000,
+      "obstacles": {
+        "type": "rotating_blocks",
+        "count": 12,
+        "speed": 6
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 50,
+        "value": 100
+      },
+      "special_features": [
+        "time_freeze_powerup",
+        "tile_swap_booster"
+      ],
+      "background_theme": "underwater",
+      "music_track": "suspenseful_melody"
+    },
+    {
+      "level_number": 10,
+      "name": "Tile Tempest III",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.9,
+      "time_limit_seconds": 20,
+      "target_score": 5000,
+      "obstacles": {
+        "type": "falling_blocks",
+        "count": 20,
+        "speed": 6
+      },
+      "collectibles": {
+        "type": "points",
+        "count": 55,
+        "value": 100
+      },
+      "special_features": [
+        "time_extension_powerup",
+        "score_multiplier_powerup"
+      ],
+      "background_theme": "futuristic",
+      "music_track": "intense_techno"
+    }
+  ]
+}
